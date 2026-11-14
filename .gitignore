@@ -1,0 +1,12 @@
+﻿bin/
+obj/
+.vs/
+*.user
+
+# Paquetes y ficheros personales (no son código)
+releases/
+*.zip
+session-export-*/
+*.docx
+*.xlsx
+Reflex Unit by lokus.png

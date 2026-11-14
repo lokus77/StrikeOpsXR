@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>StrikeOpsXR</AssemblyName>
+    <RootNamespace>StrikeOpsXR</RootNamespace>
+    <Description>Mod VR (OpenXR) para Reflex Unit Strike Ops</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Core" Version="5.4.21" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+  <!-- Ensamblados del juego (no se copian a la salida) -->
+  <ItemGroup>
+    <Reference Include="UnityEngine"><HintPath>$(GameManaged)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(GameManaged)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.XRModule"><HintPath>$(GameManaged)\UnityEngine.XRModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.VRModule"><HintPath>$(GameManaged)\UnityEngine.VRModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.SubsystemsModule"><HintPath>$(GameManaged)\UnityEngine.SubsystemsModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.ImageConversionModule"><HintPath>$(GameManaged)\UnityEngine.ImageConversionModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.AudioModule"><HintPath>$(GameManaged)\UnityEngine.AudioModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.PhysicsModule"><HintPath>$(GameManaged)\UnityEngine.PhysicsModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.UIElementsModule"><HintPath>$(GameManaged)\UnityEngine.UIElementsModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Unity.InputSystem"><HintPath>$(GameManaged)\Unity.InputSystem.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Unity.RenderPipelines.Core.Runtime"><HintPath>$(GameManaged)\Unity.RenderPipelines.Core.Runtime.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Unity.RenderPipelines.Universal.Runtime"><HintPath>$(GameManaged)\Unity.RenderPipelines.Universal.Runtime.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Fusion.Runtime"><HintPath>$(GameManaged)\Fusion.Runtime.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Robosaru"><HintPath>$(GameManaged)\Robosaru.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+  <!-- XR de Unity (sacado de RepoXR, se despliega en RuntimeDeps) -->
+  <ItemGroup>
+    <Reference Include="Unity.XR.OpenXR"><HintPath>..\lib\managed\Unity.XR.OpenXR.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Unity.XR.Management"><HintPath>..\lib\managed\Unity.XR.Management.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+</Project>

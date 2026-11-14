@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>StrikeOpsXR.Preload</AssemblyName>
+    <RootNamespace>StrikeOpsXR.Preload</RootNamespace>
+    <Description>Preloader de StrikeOpsXR: instala el plugin nativo de OpenXR antes de que arranque el motor</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Core" Version="5.4.21" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+</Project>

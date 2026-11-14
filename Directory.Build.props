@@ -1,0 +1,23 @@
+<Project>
+  <!-- Ajustes comunes a Plugin y Preload -->
+  <PropertyGroup>
+    <!-- Carpeta de instalación del juego. Se puede sobrescribir: dotnet build -p:GamePath="D:\otra\ruta" -->
+    <GamePath Condition="'$(GamePath)' == ''">C:\juegos\Reflex.Unit.Strike.Ops</GamePath>
+    <GameManaged>$(GamePath)\StrikeOps_Data\Managed</GameManaged>
+
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+
+    <!-- Rutas cortas: la carpeta del proyecto es muy larga y Windows limita a 260 caracteres -->
+    <BaseIntermediateOutputPath>$([System.IO.Path]::GetTempPath())StrikeOpsXR\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <OutputPath>$(MSBuildThisFileDirectory)bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+
+    <Version>0.1.0</Version>
+    <Authors>StrikeOpsXR</Authors>
+  </PropertyGroup>
+</Project>
