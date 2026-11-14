@@ -1,8 +1,14 @@
 # StrikeOpsXR
 
+![Reflex Unit Strike Ops VR](docs/portada.webp)
+
 Mod VR (OpenXR) para **Reflex Unit Strike Ops** (Unity 2022.3.22f1, Mono, URP, solo Vulkan).
 
-Estado: **hito 1**, renderizado estéreo con tracking del casco. Se juega con mando/teclado y el HUD sigue en la ventana de escritorio.
+Estado: renderizado estéreo con tracking del casco, HUD y menús en un panel flotante, mandos VR mapeados, apuntado con el mando derecho y cámara que sigue al helicóptero (zoom y giro con el stick derecho).
+
+## Mandos
+
+![Mapeo de los mandos VR](docs/mandos.webp)
 
 ## Cómo funciona
 
