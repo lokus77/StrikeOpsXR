@@ -19,7 +19,7 @@ Estado: renderizado estéreo con tracking del casco, HUD y menús en un panel fl
 
 **Jugar en plano:** `Jugar sin VR.bat`.
 
-**Configuración recomendada del juego (opcional):** doble clic en `Config_recomendada_del_juego.reg` y acepta. Pone en el registro (`HKCU\Software\Robosaru\StrikeOps`) resolución 1600x1050 en ventana, 120 FPS, sin VSync ni antialias, vibración activada, idioma castellano y sin pausa en los mensajes. Ver `Leeme.txt`.
+**Mi configuración recomendada para el juego (opcional):** doble clic en `Config_recomendada_del_juego.reg` y acepta. Pone en el registro (`HKCU\Software\Robosaru\StrikeOps`) resolución 1600x1050 en ventana, 120 FPS, sin VSync ni antialias, vibración activada, idioma castellano y sin pausa en los mensajes. Ver `Leeme.txt`.
 
 **Runtime OpenXR:** si no quieres que el juego abra Steam, lanza una vez `OpenXR_Forzar_VirtualDesktop.bat`. Así el juego usará siempre el OpenXR de Virtual Desktop (VDXR), aunque otro runtime (SteamVR, Meta, Pico...) sea el activo del sistema. No cambia nada en Windows, solo `General.OpenXRRuntimeJson` en `BepInEx\config\strikeopsxr.cfg` (que se crea al arrancar el juego una vez con el mod). `OpenXR_RestaurarDefault.bat` vuelve al runtime por defecto del sistema.
 
