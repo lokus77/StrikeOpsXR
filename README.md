@@ -37,17 +37,7 @@ esta opción NO cambia nada en windows, sólo en un fichero de config del propio
 
 ![Mapeo de los mandos VR](docs/mandos.webp)
 
-## Cómo funciona
-
-| Pieza | Qué hace |
-|---|---|
-| `Preload/` (patcher de BepInEx) | Antes de que arranque el motor copia `UnityOpenXR.dll` y `openxr_loader.dll` a `StrikeOps_Data/Plugins/x86_64` y escribe `StrikeOps_Data/UnitySubsystems/UnityOpenXR/UnitySubsystemsManifest.json`. Así Unity carga OpenXR **antes de crear el dispositivo Vulkan**. |
-| `Plugin/OpenXRBoot.cs` | Crea en runtime `XRGeneralSettings`, `XRManagerSettings` y `OpenXRLoader`, fija multi-pass, registra los perfiles de mando y arranca los subsistemas. |
-| `Plugin/VRRig.cs` | La cámara del juego (Cinemachine, `Camera.main`) sigue viva, pero sin renderizar nada, para que el movimiento, el apuntado y el HUD funcionen sin parches. Una cámara XR nueva sigue su posición y su yaw, y aplica encima el pose del casco. |
-| `Plugin/PostFx.cs` | Desactiva tilt-shift, DOF, motion blur y efectos de lente. |
-| `lib/` | Binarios XR de Unity tomados de la rama `thunderstore` de [RepoXR](https://github.com/DaXcess/RepoXR): plugin OpenXR 1.10.0 con soporte Vulkan y loader de Khronos 1.1.54. |
-
-## Requisitos
+## Requisitos Compilación
 
 - .NET SDK 8 o superior (no hace falta Unity).
 - BepInEx **5.4.x win x64** instalado en el juego. Hay que arrancar el juego una vez para que cree sus carpetas.
@@ -55,13 +45,9 @@ esta opción NO cambia nada en windows, sólo en un fichero de config del propio
 - Un runtime OpenXR compatible con **Vulkan**: Virtual Desktop (VDXR, sin Steam), SteamVR o Meta Quest Link. WMR no sirve.
 
 ## Compilar e instalar
-
 ```powershell
 .\deploy.ps1
 ```
-
-Con otra ruta del juego: `.\deploy.ps1 -GamePath "D:\...\Reflex.Unit.Strike.Ops"`. Para desinstalar: `.\deploy.ps1 -Uninstall`.
-
 ## Probar
 
 1. Estar conectado con Virtual Desktop / Steam link / Metalink, con runtime OpenXR **antes** .
@@ -75,33 +61,7 @@ Con otra ruta del juego: `.\deploy.ps1 -GamePath "D:\...\Reflex.Unit.Strike.Ops"
 Para arrancar en plano sin desinstalar: `StrikeOps.exe --disable-vr`. Así ni siquiera se carga `UnityOpenXR.dll`.
 
 ## Configuración
-
 Está en `BepInEx/config/strikeopsxr.cfg`, que se genera al primer arranque:
-
-| Clave | Por defecto | Notas |
-|---|---|---|
-| `General.DisableVR` | false | |
-| `General.OpenXRRuntimeJson` | "" | Fuerza un runtime concreto (ruta a su `.json`) |
-| `Rendering.RenderScale` | 1.0 | Resolución de los ojos |
-| `Rig.WorldScale` | 1.0 | >1 = efecto maqueta (pruébalo con 10–30) |
-| `Rig.FollowCameraPitch` | false | true = hereda la inclinación de la cámara del juego |
-| `Rig.HeightOffset` / `Rig.BackOffset` | 0 | Ajuste fino de la posición del rig |
-| `Rig.RecenterKey` | F8 | |
-
-
-**Escala en vivo:** mantén el **grip izquierdo** y mueve el **stick izquierdo** arriba o abajo. Grip + clic del stick vuelve a 1. Al soltar el grip se guarda en `Rig.WorldScale`.
-| `PostFx.*` | true | Desactivan DOF/tilt-shift, motion blur y efectos de lente |
-
-## Pendiente (siguientes hitos)
-
-- **HUD en el casco** (`Plugin/UiOverlay.cs`, primera versión): cada `PanelSettings` renderiza a un RenderTexture que se muestra en un panel flotante (`UI.*` en el `.cfg`), con un cursor propio. Pendiente: alinear con el mundo los marcadores del HUD (usan `WorldToScreenPoint` de la cámara del juego).
-- **Mandos VR** (`Plugin/VRControls.cs`, primera versión):
-  - Y = mapa, A = Aceptar. Mantener Y + stick derecho arriba/abajo = flecha arriba/abajo.
-  - Stick izquierdo = Moverse por los  menús y movimiento analógico en juego (parche sobre `LocalPlayerInput.Update`).
-  - X = Aterrizar, B = Siguiente objetivo. Mantener pulsado B = Info objetivo mapa.. Mantener grip derecho + toque del stick derecho izquierda/derecha = flecha izquierda/derecha (cambiar objetivo en el mapa).
-  - Gatillo derecho = `PrimaryFire`, gatillo izquierdo = `SecondaryFire` 
-  - Indicaciones en pantalla con el botón VR (`Plugin/VRPrompts.cs`): sustituye el `keyboardSprite` de cada acción en `DeviceSprites` por el icono de mando equivalente.
-  - Apuntado con el mando derecho (`Plugin/VRAim.cs`). 
 
 ## Licencia
 
