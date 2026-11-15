@@ -23,29 +23,7 @@ Status: stereo rendering with head tracking, HUD and menus on a floating panel, 
 
 ## Controls
 
-The controller map image is in Spanish:
-
-![VR controller map](docs/mandos.webp)
-
-| Left controller | |
-|---|---|
-| Y | Minimap size |
-| Hold Y + right stick up/down | Minimap zoom in/out |
-| X | Land / pick up - drop things |
-| Trigger | Secondary fire (missiles) |
-| Grip | Boost / use |
-| Stick | Movement (strafe, accelerate, brake); navigate menus |
-| Stick click | Recenter the view |
-
-| Right controller | |
-|---|---|
-| A | Accept |
-| B | Mark target / next target |
-| Hold B | Target info on the map |
-| Trigger | Primary fire (machine gun) |
-| Hold grip + stick left/right | Previous/next target on the minimap |
-| Stick | Camera zoom and rotation |
-| Stick click | Leave the options menu |
+![VR controller map](docs/controllers.webp)
 
 ## What's new in 0.2.2
 
