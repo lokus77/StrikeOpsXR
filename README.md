@@ -1,68 +1,102 @@
 # StrikeOpsXR
 
+**English** | [Español](README.es.md)
+
 ![Reflex Unit Strike Ops VR](docs/portada.webp)
 
-Mod VR (OpenXR) para **Reflex Unit Strike Ops** (Unity 2022.3.22f1, Mono, URP, solo Vulkan).
-Probado en versiónes del juego v1.0.3 y en la última v1.1.4 (build 21335037) 
+VR (OpenXR) mod for **Reflex Unit Strike Ops** (Unity 2022.3.22f1, Mono, URP, Vulkan only).
+Tested with game versions v1.0.3 and v1.1.4 (build 21335037).
 
-Estado: renderizado estéreo con tracking del casco, HUD y menús en un panel flotante, mandos VR mapeados, apuntado con el mando derecho y cámara que sigue al helicóptero (zoom y giro con el stick derecho).
+Status: stereo rendering with head tracking, HUD and menus on a floating panel, mapped VR controllers, aiming with the right controller, and a camera that follows the helicopter (zoom and rotate with the right stick).
 
-## Novedades 0.2.2
+## Installation
 
-- Botón Y Cambia tamaño minimapa. 
-- Mantener Y + stick derecho arriba/abajo = cambia niveles de zoom del minimapa.
-- Mantenter Grip derecho + Stick dcho izquierda-derecha: Siguiente/anterior objetivo en minimapa.
+1. Download `StrikeOpsXR_<version>_release.zip` from [Releases](https://github.com/lokus77/StrikeOpsXR/releases).
+2. Extract it into the game folder (next to `StrikeOps.exe`). BepInEx is included.
+3. Connect your headset (Virtual Desktop, Steam Link or Meta Link) and launch `StrikeOps.exe`.
 
-Añadidos - `OpenXR_Forzar_VirtualDesktop.bat` y `OpenXR_RestaurarDefault.bat`.
-Si no quieres que el juego abra Steam para forzar lanzaremos una vez `OpenXR_Forzar_VirtualDesktop.bat` para forzar ek uso del OpenXR de Virtual Desktop (VDXR).
-esta opción NO cambia nada en windows, sólo en un fichero de config del propio juego.
+**First launch:** the mod enables OpenXR pre-initialization in `StrikeOps_Data/boot.config`. Unity reads that file before the mod loads, so on the first launch the game closes and reopens by itself.
 
-## Novedades 0.2.1
-- Corregidos los tirones y la imagen doble del helicóptero en VR.
+**Play flat (no VR):** `Jugar sin VR.bat`.
 
-## Novedades 0.2.0
-- Compatible OpenXR (por defecto). VDXR (Virtual Desktop) funciona bien y no necesita Steam.
-- Música habilitada por defecto.
-- Correcciones visuales: sin la mira 2D, la línea de puntos ni el recuadro del objetivo fijado (en VR no coincidían con el mundo), sin el fondo gris desenfocado de los menús y sin temblor de cámara al recibir impactos.
-- Vibración de los mandos al lanzar misiles y al recibir daño (si está activada en las opciones del juego).
-- Mejor rendimiento (FPS): sin límite de FPS del juego, sombras y SSAO ajustados y recorte de objetos lejanos.
-- Mayor distancia de dibujado de la vegetación; el mar llega hasta el horizonte.
-- La ventana del juego coge el foco al arrancar. La vista empieza siempre en distancia 0.75 y giro 0°.
+**OpenXR runtime:** if you don't want the game to open Steam, run `OpenXR_Forzar_VirtualDesktop.bat` once. The game will then always use the Virtual Desktop OpenXR runtime (VDXR), even if another runtime (SteamVR, Meta, Pico...) is the system's active one. It changes nothing in Windows, only `General.OpenXRRuntimeJson` in `BepInEx\config\strikeopsxr.cfg` (created the first time the game runs with the mod). `OpenXR_RestaurarDefault.bat` goes back to the system's default runtime.
 
-**Primer arranque:** el mod activa la preinicialización de OpenXR en `StrikeOps_Data/boot.config`. Unity lee ese fichero antes de que se cargue el mod, así que la primera vez el juego se cierra y se vuelve a abrir solo. Para jugar en plano: `Jugar sin VR.bat`.
+## Controls
 
-**Runtime OpenXR:** `OpenXR_Forzar_VirtualDesktop.bat` hace que el juego use siempre el OpenXR de Virtual Desktop (VDXR), aunque otro runtime (SteamVR, Meta, Pico...) sea el activo del sistema. `OpenXR_RestaurarDefault.bat` vuelve al runtime por defecto del sistema. Ambos cambian `General.OpenXRRuntimeJson` en `BepInEx\config\strikeopsxr.cfg`, que se crea al arrancar el juego una vez con el mod.
+The controller map image is in Spanish:
 
-## Mandos
+![VR controller map](docs/mandos.webp)
 
-![Mapeo de los mandos VR](docs/mandos.webp)
+| Left controller | |
+|---|---|
+| Y | Minimap size |
+| Hold Y + right stick up/down | Minimap zoom in/out |
+| X | Land / pick up - drop things |
+| Trigger | Secondary fire (missiles) |
+| Grip | Boost / use |
+| Stick | Movement (strafe, accelerate, brake); navigate menus |
+| Stick click | Recenter the view |
 
-## Requisitos Compilación
+| Right controller | |
+|---|---|
+| A | Accept |
+| B | Mark target / next target |
+| Hold B | Target info on the map |
+| Trigger | Primary fire (machine gun) |
+| Hold grip + stick left/right | Previous/next target on the minimap |
+| Stick | Camera zoom and rotation |
+| Stick click | Leave the options menu |
 
-- .NET SDK 8 o superior (no hace falta Unity).
-- BepInEx **5.4.x win x64** instalado en el juego. Hay que arrancar el juego una vez para que cree sus carpetas.
-- `boot.config` del juego con `gfx-enable-native-gfx-jobs=0`.
-- Un runtime OpenXR compatible con **Vulkan**: Virtual Desktop (VDXR, sin Steam), SteamVR o Meta Quest Link. WMR no sirve.
+## What's new in 0.2.2
 
-## Compilar e instalar
+- Y button: changes the minimap size.
+- Hold Y + right stick up/down: changes the minimap zoom level.
+- Hold right grip + right stick left/right: previous/next target on the minimap.
+- Added `OpenXR_Forzar_VirtualDesktop.bat` and `OpenXR_RestaurarDefault.bat` (see *OpenXR runtime*).
+
+## What's new in 0.2.1
+
+- Fixed helicopter stutter and double image in VR.
+
+## What's new in 0.2.0
+
+- OpenXR support (default). VDXR (Virtual Desktop) works well and doesn't need Steam.
+- Music enabled by default.
+- Visual fixes: no 2D crosshair, dotted line or locked-target box (they didn't line up with the world in VR), no blurred grey menu background, and no camera shake when hit.
+- Controller vibration when firing missiles and taking damage (if enabled in the game options).
+- Better performance (FPS): no game FPS cap, tuned shadows and SSAO, and culling of distant objects.
+- Longer vegetation draw distance; the sea reaches the horizon.
+- The game window takes focus on launch. The view always starts at distance 0.75 and 0° rotation.
+
+## Configuration
+
+It's in `BepInEx/config/strikeopsxr.cfg`, generated on first launch. Each option has its description in the file itself.
+
+## Build requirements
+
+- .NET SDK 8 or later (Unity is not needed).
+- BepInEx **5.4.x win x64** installed in the game. Launch the game once so it creates its folders.
+- The game's `boot.config` with `gfx-enable-native-gfx-jobs=0`.
+- An OpenXR runtime that supports **Vulkan**: Virtual Desktop (VDXR, no Steam), SteamVR or Meta Quest Link. WMR does not work.
+
+## Build and install
+
 ```powershell
 .\deploy.ps1
 ```
-## Probar
 
-1. Estar conectado con Virtual Desktop / Steam link / Metalink, con runtime OpenXR **antes** .
-2. Lanza `StrikeOps.exe`.
-3. Revisa los logs:
-   - `BepInEx/LogOutput.log`: tiene que aparecer `OpenXR en marcha. Runtime: ...` y `Cámara del juego: ...`.
-   - `%USERPROFILE%\AppData\LocalLow\Robosaru\StrikeOps\Player.log`: busca la línea
-     `[Vulkan init] SelectPhysicalDevice ... xrDevice=`. **Si el valor no es nulo**, OpenXR ha intervenido en la creación de Vulkan.
-4. Para recentrar: **F8** o clic del stick izquierdo. También se recentra solo al ponerse el casco.
+## Testing
 
-Para arrancar en plano sin desinstalar: `StrikeOps.exe --disable-vr`. Así ni siquiera se carga `UnityOpenXR.dll`.
+1. Connect with Virtual Desktop / Steam Link / Meta Link, with the OpenXR runtime running **before** launching the game.
+2. Launch `StrikeOps.exe`.
+3. Check the logs:
+   - `BepInEx/LogOutput.log`: it should show `OpenXR en marcha. Runtime: ...` and `Cámara del juego: ...` (the mod logs in Spanish).
+   - `%USERPROFILE%\AppData\LocalLow\Robosaru\StrikeOps\Player.log`: look for the line
+     `[Vulkan init] SelectPhysicalDevice ... xrDevice=`. **If the value is not null**, OpenXR took part in creating the Vulkan device.
+4. To recenter: **F8** or left stick click. It also recenters by itself when you put the headset on.
 
-## Configuración
-Está en `BepInEx/config/strikeopsxr.cfg`, que se genera al primer arranque:
+To launch flat without uninstalling: `StrikeOps.exe --disable-vr`. This doesn't even load `UnityOpenXR.dll`.
 
-## Licencia
+## License
 
-GPL-3.0, porque partes del código derivan de RepoXR (© DaXcess). Los binarios de `lib/` pertenecen a Unity Technologies (plugin OpenXR) y a The Khronos Group (loader OpenXR).
+GPL-3.0, because parts of the code derive from RepoXR (© DaXcess). The binaries in `lib/` belong to Unity Technologies (OpenXR plugin) and The Khronos Group (OpenXR loader).
