@@ -171,13 +171,15 @@ internal class VRRig : MonoBehaviour
             MoveVcamsToLayer();
         }
 
-        UpdateFollow();
         UpdatePose();
     }
 
     // Justo antes de renderizar: pose más reciente del casco y posición final de Cinemachine
     private void OnBeforeRender()
     {
+        // El seguimiento va aquí y no en LateUpdate: Fusion interpola el helicóptero visible en su propio
+        // LateUpdate, así se usa siempre su posición final de este fotograma
+        UpdateFollow();
         UpdatePose();
     }
 
@@ -352,10 +354,18 @@ internal class VRRig : MonoBehaviour
     /// mismo desplazamiento que tenía la cámara del juego respecto a él (capturado al aparecer,
     /// y de nuevo al recentrar).
     /// </summary>
+    /// <summary>
+    /// La raíz del jugador (Fusion NetworkRigidbody) se mueve a saltos, una vez por tic de red/física; lo que
+    /// se ve es el vehículo, su InterpolationTarget, que se interpola en cada fotograma. Seguir la raíz hacía que
+    /// el helicóptero diera pequeños tirones respecto a la vista.
+    /// </summary>
+    private static Transform FollowTransform(Robosaru.NetworkPlayer player) =>
+        player.vehicle != null ? player.vehicle.transform : player.transform;
+
     private void UpdateFollow()
     {
         var player = Robosaru.NetworkPlayer.LocalPlayer;
-        var target = Plugin.Cfg.FollowPlayer.Value && player != null && source != null ? player.transform : null;
+        var target = Plugin.Cfg.FollowPlayer.Value && player != null && source != null ? FollowTransform(player) : null;
 
         if (target == null)
         {
@@ -383,7 +393,7 @@ internal class VRRig : MonoBehaviour
             followOffset = source.transform.position - target.position;
             smoothedTarget = target.position;
             following = true;
-            Plugin.Log.LogInfo($"Cámara VR sigue al jugador (desplazamiento {followOffset:F1})");
+            Plugin.Log.LogInfo($"Cámara VR sigue al jugador ({target.name}, desplazamiento {followOffset:F1})");
         }
 
         if (!following)

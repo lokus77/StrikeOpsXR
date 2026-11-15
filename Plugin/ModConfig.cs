@@ -153,8 +153,8 @@ internal class ModConfig
 
         FollowPlayer = file.Bind("Rig", "FollowPlayer", true,
             "En partida la vista VR sigue al helicóptero (true) o a la cámara del juego (false)");
-        FollowSharpness = file.Bind("Rig", "FollowSharpness", 4f,
-            "Rapidez del seguimiento (más alto = más pegado al helicóptero, más bajo = más suave)");
+        FollowSharpness = file.Bind("Rig", "FollowSharpness", 1000f,
+            "Rapidez del seguimiento. 1000 = vista pegada al helicóptero (sin tirones ni imagen doble). Valores bajos (4-20) suavizan, pero el helicóptero baila en la vista");
         FollowCaptureDelay = file.Bind("Rig", "FollowCaptureDelay", 2f,
             "Segundos tras aparecer antes de fijar la distancia/ángulo de seguimiento (deja que la cámara del juego se coloque)");
 

@@ -17,7 +17,7 @@ public class Plugin : BaseUnityPlugin
 {
     public const string GUID = "strikeopsxr";
     public const string NAME = "StrikeOpsXR";
-    public const string VERSION = "0.2.0";
+    public const string VERSION = "0.2.1";
 
     internal static Plugin Instance { get; private set; }
     internal static ModConfig Cfg { get; private set; }
@@ -144,6 +144,7 @@ public class Plugin : BaseUnityPlugin
         go.AddComponent<VRRig>();
         go.AddComponent<Diagnostics>();
         go.AddComponent<VRWorldTweaks>();
+        go.AddComponent<MotionProbe>(); // solo mide con Diagnostics = true
         if (Cfg.Diagnostics.Value)
             go.AddComponent<PerfMonitor>();
 

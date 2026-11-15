@@ -6,6 +6,10 @@ Mod VR (OpenXR) para **Reflex Unit Strike Ops** (Unity 2022.3.22f1, Mono, URP, s
 
 Estado: renderizado estéreo con tracking del casco, HUD y menús en un panel flotante, mandos VR mapeados, apuntado con el mando derecho y cámara que sigue al helicóptero (zoom y giro con el stick derecho).
 
+## Novedades 0.2.1
+
+- Corregidos los tirones y la imagen doble del helicóptero en VR: la vista va pegada al helicóptero visible (`Rig.FollowSharpness = 1000` por defecto).
+
 ## Novedades 0.2.0
 
 - Compatible OpenXR (por defecto). VDXR (Virtual Desktop) funciona bien y no necesita Steam.
