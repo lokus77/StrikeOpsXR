@@ -3,16 +3,19 @@
 ![Reflex Unit Strike Ops VR](docs/portada.webp)
 
 Mod VR (OpenXR) para **Reflex Unit Strike Ops** (Unity 2022.3.22f1, Mono, URP, solo Vulkan).
-Probado en versión 1.0.3 del juego.
+Probado en versiónes del juego v1.0.3 y en la última v1.1.4 (build 21335037) 
 
 Estado: renderizado estéreo con tracking del casco, HUD y menús en un panel flotante, mandos VR mapeados, apuntado con el mando derecho y cámara que sigue al helicóptero (zoom y giro con el stick derecho).
 
 ## Novedades 0.2.2
 
-- Y + stick derecho arriba/abajo = flecha arriba/abajo (Y sigue abriendo el mapa). Mientras se mantiene Y, la vista no se mueve.
-- Grip derecho mantenido + toque del stick derecho a izquierda/derecha = una flecha izquierda/derecha por toque. El grip solo ya no manda flecha derecha; sin grip, el stick derecho sigue girando y acercando la vista.
-- `OpenXR_Forzar_VirtualDesktop.bat` y `OpenXR_RestaurarDefault.bat` para forzar el OpenXR de Virtual Desktop (VDXR) o volver al del sistema.
-- Si a `boot.config` le falta la preinicialización OpenXR (primer arranque o tras `Jugar sin VR.bat` interrumpido), el mod la pone y reabre el juego solo, en vez de colgarse con VDXR.
+- Botón Y Cambia tamaño minimapa. 
+- Mantener Y + stick derecho arriba/abajo = cambia niveles de zoom del minimapa.
+- Mantenter Grip derecho + Stick dcho izquierda-derecha: Siguiente/anterior objetivo en minimapa.
+
+Añadidos - `OpenXR_Forzar_VirtualDesktop.bat` y `OpenXR_RestaurarDefault.bat`.
+Si no quieres que el juego abra Steam para forzar lanzaremos una vez `OpenXR_Forzar_VirtualDesktop.bat` para forzar ek uso del OpenXR de Virtual Desktop (VDXR).
+esta opción NO cambia nada en windows, sólo en un fichero de config del propio juego.
 
 ## Novedades 0.2.1
 - Corregidos los tirones y la imagen doble del helicóptero en VR.
