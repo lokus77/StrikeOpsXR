@@ -289,6 +289,7 @@ internal class UiOverlay : MonoBehaviour
                 continue;
 
             var c = ve.resolvedStyle.backgroundColor;
+            LogLargeElement(doc, ve, rootArea);
             if (c.a < 0.3f)
                 continue;
 
@@ -309,6 +310,32 @@ internal class UiOverlay : MonoBehaviour
 
         if (seenOpaque.Count > 2000)
             seenOpaque.Clear();
+    }
+
+    private readonly HashSet<string> loggedLarge = new();
+
+    /// <summary>Diagnóstico: describe una vez cada elemento visible que ocupa más del 25 % del panel.</summary>
+    private void LogLargeElement(UIDocument doc, VisualElement ve, float rootArea)
+    {
+        if (!Plugin.Cfg.Diagnostics.Value)
+            return;
+        var b = ve.worldBound;
+        var frac = b.width * b.height / rootArea;
+        if (float.IsNaN(frac) || frac < 0.25f)
+            return;
+
+        var s = ve.resolvedStyle;
+        var bg = s.backgroundImage;
+        Object img = bg.texture != null ? bg.texture : bg.sprite != null ? bg.sprite :
+                     bg.renderTexture != null ? bg.renderTexture : bg.vectorImage;
+        var desc = $"{doc.name}/{ve.name} ({ve.GetType().Name}) [{string.Join(" ", ve.GetClasses())}] " +
+                   $"fondo {ColorUtility.ToHtmlStringRGBA(s.backgroundColor)}, imagen {(img != null ? img.name : "-")}, " +
+                   $"tinte {ColorUtility.ToHtmlStringRGBA(s.unityBackgroundImageTintColor)}, opacidad {s.opacity:F2}, " +
+                   $"borde {s.borderTopWidth:F0} {ColorUtility.ToHtmlStringRGBA(s.borderTopColor)}, {frac:P0}";
+        if (loggedLarge.Add(desc))
+            Plugin.Log.LogInfo($"[UI grande] {desc}");
+        if (loggedLarge.Count > 500)
+            loggedLarge.Clear();
     }
 
     // ---- sustitución de imágenes (p. ej. "plays best with gamepad") ----
@@ -414,7 +441,9 @@ internal class UiOverlay : MonoBehaviour
             .Split(new[] { '|' }, System.StringSplitOptions.RemoveEmptyEntries)
             .Select(s => s.Trim()).Where(s => s.Length > 0), System.StringComparer.OrdinalIgnoreCase);
 
-        if (!hideElements.Contains(ve.name) || ve.resolvedStyle.display == DisplayStyle.None)
+        // También por prefijo: la línea de puntos son varios elementos numerados (VisualElement_TargetHelper0, 1...)
+        if (ve.resolvedStyle.display == DisplayStyle.None ||
+            !hideElements.Any(h => ve.name.StartsWith(h, System.StringComparison.OrdinalIgnoreCase)))
             return;
 
         ve.style.display = DisplayStyle.None;

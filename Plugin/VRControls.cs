@@ -239,7 +239,7 @@ internal class VRControls : MonoBehaviour
 
     private void LogBindings()
     {
-        if (loggedBindings) return;
+        if (loggedBindings || !Plugin.Cfg.Diagnostics.Value) return;
         loggedBindings = true;
 
         foreach (var pi in PlayerInput.all)

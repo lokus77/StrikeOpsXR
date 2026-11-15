@@ -90,13 +90,34 @@ internal class GameConfig : MonoBehaviour
             scale = width / baseWidth;
 
         scale = Mathf.Clamp(scale, MinScale, MaxScale);
+        appliedScale = scale;
         XRSettings.eyeTextureResolutionScale = scale;
+        ApplyUrpScale();
 
         var w = baseWidth > 0f ? Mathf.RoundToInt(baseWidth * scale) : 0;
         var aspect = XRSettings.eyeTextureWidth > 0 ? (float)XRSettings.eyeTextureHeight / XRSettings.eyeTextureWidth : 0f;
         Plugin.Log.LogInfo($"Resolución VR: escala {scale:F2}" +
                            (w > 0 ? $" ≈ {w}x{Mathf.RoundToInt(w * aspect)} por ojo (recomendada {baseWidth:F0} de ancho)" : ""));
     }
+
+    private float appliedScale = -1f;
+
+    /// <summary>
+    /// En URP con XR la escala real de los ojos es el renderScale del asset de URP (lo aplica cada fotograma
+    /// y pisa XRSettings.eyeTextureResolutionScale). URP lo limita a 0.1 - 2.
+    /// </summary>
+    private void ApplyUrpScale()
+    {
+        if (appliedScale <= 0f ||
+            UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline is not UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset urp)
+            return;
+
+        var s = Mathf.Clamp(appliedScale, 0.1f, 2f);
+        if (!Mathf.Approximately(urp.renderScale, s))
+            urp.renderScale = s;
+    }
+
+    private void LateUpdate() => ApplyUrpScale(); // por si el juego (FSR) lo vuelve a cambiar
 
     private Dictionary<string, string> Read()
     {

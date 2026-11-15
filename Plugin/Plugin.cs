@@ -17,7 +17,7 @@ public class Plugin : BaseUnityPlugin
 {
     public const string GUID = "strikeopsxr";
     public const string NAME = "StrikeOpsXR";
-    public const string VERSION = "0.1.0";
+    public const string VERSION = "0.2.0";
 
     internal static Plugin Instance { get; private set; }
     internal static ModConfig Cfg { get; private set; }
@@ -50,6 +50,8 @@ public class Plugin : BaseUnityPlugin
         go.hideFlags = HideFlags.HideAndDontSave;
         DontDestroyOnLoad(go);
         go.AddComponent<VRBootstrap>();
+        if (Cfg.FocusWindow.Value)
+            go.AddComponent<WindowFocus>();
     }
 
     /// <summary>
@@ -134,9 +136,16 @@ public class Plugin : BaseUnityPlugin
 
         var harmony = new HarmonyLib.Harmony(GUID);
         IpdScale.Install(harmony);
+        try { FrameRateUncap.Install(harmony); }
+        catch (Exception ex) { Log.LogWarning($"No se pudo quitar el límite de FPS: {ex.Message}"); }
+        try { NoCameraShake.Install(harmony); }
+        catch (Exception ex) { Log.LogWarning($"No se pudo quitar el temblor de cámara: {ex.Message}"); }
         go.AddComponent<GameConfig>(); // resolución VR desde config.cfg junto al .exe
         go.AddComponent<VRRig>();
         go.AddComponent<Diagnostics>();
+        go.AddComponent<VRWorldTweaks>();
+        if (Cfg.Diagnostics.Value)
+            go.AddComponent<PerfMonitor>();
 
         if (Cfg.ControllersEnabled.Value)
         {
@@ -148,6 +157,8 @@ public class Plugin : BaseUnityPlugin
                     VRPrompts.Install(harmony);
                 go.AddComponent<VRControls>();
                 go.AddComponent<VRAim>();
+                VRHaptics.Install(harmony);
+                go.AddComponent<VRHaptics>();
             }
             catch (Exception ex)
             {
@@ -155,7 +166,11 @@ public class Plugin : BaseUnityPlugin
             }
         }
         if (Cfg.UiEnabled.Value)
+        {
+            try { NoBlurredBackground.Install(harmony); }
+            catch (Exception ex) { Log.LogWarning($"No se pudo quitar el fondo desenfocado: {ex.Message}"); }
             go.AddComponent<UiOverlay>();
+        }
         PostFx.Apply();
 
         SceneManager.sceneLoaded += (_, _) => PostFx.Apply();

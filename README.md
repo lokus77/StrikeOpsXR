@@ -6,6 +6,18 @@ Mod VR (OpenXR) para **Reflex Unit Strike Ops** (Unity 2022.3.22f1, Mono, URP, s
 
 Estado: renderizado estéreo con tracking del casco, HUD y menús en un panel flotante, mandos VR mapeados, apuntado con el mando derecho y cámara que sigue al helicóptero (zoom y giro con el stick derecho).
 
+## Novedades 0.2.0
+
+- Compatible OpenXR (por defecto). VDXR (Virtual Desktop) funciona bien y no necesita Steam.
+- Música habilitada por defecto.
+- Correcciones visuales: sin la mira 2D, la línea de puntos ni el recuadro del objetivo fijado (en VR no coincidían con el mundo), sin el fondo gris desenfocado de los menús y sin temblor de cámara al recibir impactos.
+- Vibración de los mandos al lanzar misiles y al recibir daño (si está activada en las opciones del juego).
+- Mejor rendimiento (FPS): sin límite de FPS del juego, sombras y SSAO ajustados y recorte de objetos lejanos.
+- Mayor distancia de dibujado de la vegetación; el mar llega hasta el horizonte.
+- La ventana del juego coge el foco al arrancar. La vista empieza siempre en distancia 0.75 y giro 0°.
+
+**Primer arranque:** el mod activa la preinicialización de OpenXR en `StrikeOps_Data/boot.config`. Unity lee ese fichero antes de que se cargue el mod, así que la primera vez hay que cerrar el juego y volver a abrirlo. Para jugar en plano: `Jugar sin VR.bat`.
+
 ## Mandos
 
 ![Mapeo de los mandos VR](docs/mandos.webp)
@@ -25,7 +37,7 @@ Estado: renderizado estéreo con tracking del casco, HUD y menús en un panel fl
 - .NET SDK 8 o superior (no hace falta Unity).
 - BepInEx **5.4.x win x64** instalado en el juego. Hay que arrancar el juego una vez para que cree sus carpetas.
 - `boot.config` del juego con `gfx-enable-native-gfx-jobs=0`.
-- Un runtime OpenXR compatible con **Vulkan**: SteamVR, Meta Quest Link o Virtual Desktop (VDXR). WMR no sirve.
+- Un runtime OpenXR compatible con **Vulkan**: Virtual Desktop (VDXR, sin Steam), SteamVR o Meta Quest Link. WMR no sirve.
 
 ## Compilar e instalar
 
@@ -75,7 +87,7 @@ Está en `BepInEx/config/strikeopsxr.cfg`, que se genera al primer arranque:
   - Gatillo derecho = `PrimaryFire`, gatillo izquierdo = `SecondaryFire`, resueltos en tiempo de ejecución a su tecla o botón de ratón.
   - Indicaciones en pantalla con el botón VR (`Plugin/VRPrompts.cs`): sustituye el `keyboardSprite` de cada acción en `DeviceSprites` por el icono de mando equivalente.
   - Apuntado con el mando derecho (`Plugin/VRAim.cs`): un rayo desde el mando contra `PoolManager.mouseAimingLayer`; el punto se proyecta a la pantalla de la cámara del juego y se mueve el ratón ahí. Muestra un láser.
-- **Confort**: quitar el shake de `CameraFollow` (`perlinNoise`, `TakeHit`) y suavizar el seguimiento del rig.
+- **Confort**: suavizar el seguimiento del rig.
 - **Verificar**: que el parche de IPD (`Plugin/IpdScale.cs`, prefijo de Harmony en `XRView`) da un efecto maqueta correcto, y que las nubes volumétricas y `sc.posteffects` se ven bien en estéreo.
 
 ## Licencia

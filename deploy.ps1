@@ -31,6 +31,11 @@ if ($Uninstall) {
                    (Join-Path $nativeDir "UnityOpenXR.dll"), (Join-Path $nativeDir "openxr_loader.dll")) {
         if (Test-Path $p) { Remove-Item $p -Recurse -Force -Confirm:$false; Write-Host "Eliminado $p" }
     }
+    $boot = Join-Path $dataDir "boot.config"
+    if (Test-Path $boot) {
+        (Get-Content $boot) | Where-Object { $_ -notmatch '^\s*xrsdk-pre-init-library' } | Set-Content $boot -Encoding ascii
+        Write-Host "Quitada la preinicializacion OpenXR de boot.config"
+    }
     Write-Host "StrikeOpsXR desinstalado (BepInEx se queda)." -ForegroundColor Green
     return
 }
@@ -53,6 +58,19 @@ Copy-Item (Join-Path $root "lib\managed\*.dll") (Join-Path $plugDir "RuntimeDeps
 
 Copy-Item (Join-Path $bin "StrikeOpsXR.Preload\StrikeOpsXR.Preload.dll") $patchDir -Force
 Copy-Item (Join-Path $root "lib\native\*.dll") (Join-Path $patchDir "RuntimeDeps") -Force
+
+# Preinicialización OpenXR (Unity crea Vulkan a través de OpenXR; necesario para VDXR).
+# El preloader también la pone, pero solo vale desde el arranque siguiente.
+$boot = Join-Path $dataDir "boot.config"
+if (Test-Path $boot) {
+    $lines = @(Get-Content $boot | Where-Object { $_ -notmatch '^\s*xrsdk-pre-init-library' })
+    if (-not (Test-Path "$boot.strikeopsxr.bak")) { Copy-Item $boot "$boot.strikeopsxr.bak" }
+    ($lines + "xrsdk-pre-init-library=UnityOpenXR") | Set-Content $boot -Encoding ascii
+}
+
+# Las DLL nativas también se copian ya a Plugins/x86_64: la preinicialización las necesita antes que el preloader
+New-Item -ItemType Directory -Force $nativeDir | Out-Null
+Copy-Item (Join-Path $root "lib\native\*.dll") $nativeDir -Force
 
 Write-Host "Instalado en $GamePath" -ForegroundColor Green
 Write-Host "  $plugDir"

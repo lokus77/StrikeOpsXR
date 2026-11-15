@@ -6,9 +6,11 @@ namespace StrikeOpsXR;
 internal class ModConfig
 {
     public readonly ConfigEntry<bool> DisableVR;
+    public readonly ConfigEntry<bool> FocusWindow;
     public readonly ConfigEntry<bool> Diagnostics;
     public readonly ConfigEntry<string> OpenXRRuntimeJson;
     public readonly ConfigEntry<float> RenderScale;
+    public readonly ConfigEntry<string> StereoRenderMode;
 
     public readonly ConfigEntry<float> WorldScale;
     public readonly ConfigEntry<bool> FollowCameraPitch;
@@ -19,8 +21,7 @@ internal class ModConfig
     public readonly ConfigEntry<bool> FollowPlayer;
     public readonly ConfigEntry<float> FollowSharpness;
     public readonly ConfigEntry<float> FollowCaptureDelay;
-    public readonly ConfigEntry<float> CameraDistance;
-    public readonly ConfigEntry<float> CameraYaw;
+    public readonly ConfigEntry<float> CameraMaxDistance;
     public readonly ConfigEntry<float> CameraTurnSpeed;
 
     public readonly ConfigEntry<bool> ControllersEnabled;
@@ -30,6 +31,8 @@ internal class ModConfig
     public readonly ConfigEntry<bool> VRButtonPrompts;
     public readonly ConfigEntry<bool> ShowReticle;
     public readonly ConfigEntry<float> AimMaxDistance;
+    public readonly ConfigEntry<bool> Haptics;
+    public readonly ConfigEntry<float> HapticStrength;
 
     public readonly ConfigEntry<bool> UiEnabled;
     public readonly ConfigEntry<float> UiDistance;
@@ -44,22 +47,44 @@ internal class ModConfig
     public readonly ConfigEntry<bool> UiReplaceImageFullScreen;
     public readonly ConfigEntry<string> UiHideTexts;
     public readonly ConfigEntry<string> UiHideElements;
+    public readonly ConfigEntry<bool> UiDisableBlurredBackground;
     public readonly ConfigEntry<float> CursorSize;
 
     public readonly ConfigEntry<bool> DisableDepthOfField;
     public readonly ConfigEntry<bool> DisableMotionBlur;
     public readonly ConfigEntry<bool> DisableLensEffects;
+    public readonly ConfigEntry<bool> DisableCameraShake;
+
+    public readonly ConfigEntry<float> FarClipMultiplier;
+    public readonly ConfigEntry<float> ShadowDistance;
+    public readonly ConfigEntry<float> LodBiasMultiplier;
+    public readonly ConfigEntry<float> TerrainDetailMultiplier;
+    public readonly ConfigEntry<float> TreeBillboardDistance;
+    public readonly ConfigEntry<float> DetailDensity;
+    public readonly ConfigEntry<float> OceanExtension;
+    public readonly ConfigEntry<float> OceanExtensionDepth;
+    public readonly ConfigEntry<string> DisabledRendererFeatures;
+    public readonly ConfigEntry<bool> UncapFrameRate;
+    public readonly ConfigEntry<float> ObjectCullDistance;
+    public readonly ConfigEntry<string> ObjectCullExceptLayers;
 
     public ModConfig(ConfigFile file)
     {
         DisableVR = file.Bind("General", "DisableVR", false,
             "Arranca el juego en plano aunque el mod esté instalado (equivale a --disable-vr)");
-        Diagnostics = file.Bind("General", "Diagnostics", true,
-            "Escribe cada 5 s en el log la posición de la cámara del juego, el jugador y los oyentes de audio");
+        FocusWindow = file.Bind("General", "FocusWindow", true,
+            "Al arrancar, si la ventana del juego queda minimizada o en segundo plano, la restaura y le da el foco");
+        Diagnostics = file.Bind("General", "Diagnostics", false,
+            "Trazas de prueba en el log: cada 5 s cámara, jugador, audio y rendimiento (FPS), apuntado, mandos y UI. Apagado = log limpio");
         OpenXRRuntimeJson = file.Bind("General", "OpenXRRuntimeJson", "",
             "Ruta a un JSON de runtime OpenXR para forzarlo (vacío = runtime por defecto del sistema)");
         RenderScale = file.Bind("Rendering", "RenderScale", 1.0f,
             "Solo el valor inicial: la resolución VR se ajusta en config.cfg junto a StrikeOps.exe (VRRenderScale / VREyeWidth)");
+        StereoRenderMode = file.Bind("Rendering", "StereoRenderMode", "MultiPass",
+            new ConfigDescription("Cómo se dibujan los dos ojos (requiere reiniciar el juego). MultiPass = la escena entera dos veces, " +
+                "funciona siempre. SinglePass = los dos ojos a la vez (multiview en Vulkan): mucho menos procesador, pero solo se ve " +
+                "bien si los shaders del juego lo soportan; con este juego no funciona (ojo izquierdo blanco, derecho negro): los shaders no traen esas variantes",
+                new AcceptableValueList<string>("MultiPass", "SinglePass")));
 
         WorldScale = file.Bind("Rig", "WorldScale", 30.0f,
             "Escala del rig VR. >1 = te haces gigante y el mundo parece una maqueta (efecto diorama)");
@@ -86,6 +111,10 @@ internal class ModConfig
             "Mira amarilla en el mundo 3D en el punto al que apunta el juego");
         AimMaxDistance = file.Bind("Controls", "AimMaxDistance", 400f,
             "Si el mando apunta lejos o al cielo y no toca nada: distancia (m) del helicóptero a la que se apunta");
+        Haptics = file.Bind("Controls", "Haptics", true,
+            "Vibración de los mandos VR (misiles e impactos). Además tiene que estar activada la vibración en las opciones del juego");
+        HapticStrength = file.Bind("Controls", "HapticStrength", 1f,
+            "Intensidad de la vibración (0 - 1)");
         VRButtonPrompts = file.Bind("Controls", "VRButtonPrompts", true,
             "Las indicaciones en pantalla muestran el botón del mando VR (A, B, X, Y...) en vez de la tecla");
 
@@ -111,9 +140,12 @@ internal class ModConfig
             "true = la imagen de sustitución ocupa toda la pantalla (ajustada sin deformar); false = en el tamaño del elemento original");
         UiHideTexts = file.Bind("UI", "HideTexts", "best with gamepad|best with a gamepad|mejor con mando|mejor con un mando",
             "Textos de la interfaz que se ocultan si contienen alguna de estas frases (separadas por |, sin distinguir mayúsculas)");
-        UiHideElements = file.Bind("UI", "HideElements", "VisualElement_TargetAim|VisualElement_TargetHelper",
-            "Elementos de la interfaz (por nombre, separados por |) que se ocultan. Por defecto, la mira y la línea de " +
-            "puntos al objetivo fijado, que el juego dibuja en 2D y en VR no coinciden con el mundo (ya está la mira 3D)");
+        UiDisableBlurredBackground = file.Bind("UI", "DisableBlurredBackground", true,
+            "Quita el fondo desenfocado que el juego pone detrás de algunos menús (¿Seleccionar vehículo?, pausa). " +
+            "En VR se ve como un recuadro gris opaco. Requiere reiniciar el juego");
+        UiHideElements = file.Bind("UI", "HideElements", "VisualElement_Target",
+            "Elementos de la interfaz (por nombre, separados por |) que se ocultan. Por defecto, VisualElement_Target (el recuadro, la mira y la línea de " +
+            "puntos al objetivo fijado; también vale el principio del nombre), que el juego dibuja en 2D y en VR no coinciden con el mundo (ya está la mira 3D)");
         ShowCursor = file.Bind("UI", "ShowCursor", true,
             "Dibuja el cursor del ratón sobre el panel");
         CursorSize = file.Bind("UI", "CursorSize", 0.04f,
@@ -126,12 +158,10 @@ internal class ModConfig
         FollowCaptureDelay = file.Bind("Rig", "FollowCaptureDelay", 2f,
             "Segundos tras aparecer antes de fijar la distancia/ángulo de seguimiento (deja que la cámara del juego se coloque)");
 
-        CameraDistance = file.Bind("Rig", "CameraDistance", 0.75f,
-            "Distancia de la vista al helicóptero respecto a la de la cámara del juego (1 = igual, <1 = más cerca). " +
-            "En juego: stick derecho arriba/abajo");
+        CameraMaxDistance = file.Bind("Rig", "CameraMaxDistance", 1.25f,
+            "Lo más lejos que se puede alejar la vista con el stick derecho (arriba/abajo; al arrancar empieza en 0.75), respecto a la cámara del juego " +
+            "(1 = igual que el juego, unos 220 m; 1.25 = unos 275 m). Entre 0.15 y 3");
 
-        CameraYaw = file.Bind("Rig", "CameraYaw", 0f,
-            "Giro de la vista alrededor del helicóptero (grados). En juego: stick derecho izquierda/derecha");
         CameraTurnSpeed = file.Bind("Rig", "CameraTurnSpeed", 60f,
             "Velocidad de giro de la vista (grados por segundo con el stick a fondo)");
 
@@ -141,5 +171,41 @@ internal class ModConfig
             "Desactiva motion blur");
         DisableLensEffects = file.Bind("PostFx", "DisableLensEffects", true,
             "Desactiva distorsión de lente, aberración cromática y proyección Panini");
+        DisableCameraShake = file.Bind("PostFx", "DisableCameraShake", true,
+            "Quita el temblor de cámara al recibir impactos y con el turbo (la vibración de los mandos se mantiene)");
+
+        OceanExtension = file.Bind("World", "OceanExtension", 8f,
+            "El mar del juego es un plano de 7.5 x 10 km y en VR se ve su borde en el horizonte. Se añade debajo una copia " +
+            "visual este número de veces más grande. 0 = desactivado. Coste de rendimiento muy bajo");
+        OceanExtensionDepth = file.Bind("World", "OceanExtensionDepth", 0.5f,
+            "Metros por debajo del mar original a los que se coloca la copia (para que no se mezclen dentro del mapa)");
+        FarClipMultiplier = file.Bind("World", "FarClipMultiplier", 1f,
+            "Distancia de dibujado respecto a la cámara del juego (1 = igual; el juego ya dibuja hasta 100 km)");
+        ShadowDistance = file.Bind("World", "ShadowDistance", 450f,
+            "Distancia de las sombras en metros (0 = la del juego, 600). Más bajo = más FPS");
+        ObjectCullDistance = file.Bind("World", "ObjectCullDistance", 800f,
+            "Distancia (m) a partir de la que no se dibujan los objetos (edificios, vehículos, decoración). En VR se mira " +
+            "al horizonte y entra todo el mapa, lo que satura el procesador. El terreno y el mar se siguen viendo hasta el " +
+            "horizonte. 0 = sin límite. Más bajo = más FPS");
+        ObjectCullExceptLayers = file.Bind("World", "ObjectCullExceptLayers", "Terrain|Water|UI",
+            "Capas que no se recortan nunca (nombres separados por |). Las capas salen en el log como '[Mundo] recorte de objetos'");
+        UncapFrameRate = file.Bind("World", "UncapFrameRate", true,
+            "Quita el límite de FPS de las opciones del juego (VSync / Max 60...). En VR los FPS los marca el casco");
+        DisabledRendererFeatures = file.Bind("World", "DisabledRendererFeatures", "ScreenSpaceAmbientOcclusion",
+            "Efectos del renderer que se desactivan, separados por | (en VR se calculan una vez por ojo). Los disponibles " +
+            "salen en el log como '[Mundo] efectos del renderer'. Por ejemplo: ScreenSpaceAmbientOcclusion (sombreado de " +
+            "contacto, caro), EdgeDetectionRenderer (contornos), FSRScriptableRenderFeature, DecalRendererFeature. Vacío = ninguno");
+        LodBiasMultiplier = file.Bind("World", "LodBiasMultiplier", 2f,
+            "Multiplica el nivel de detalle a distancia (LOD bias). Más alto = los árboles lejanos no desaparecen, " +
+            "pero cuesta bastantes FPS. 1 = como el juego");
+        TerrainDetailMultiplier = file.Bind("World", "TerrainDetailMultiplier", 1f,
+            "Multiplica la distancia de la vegetación del terreno (hierba, arbustos; los árboles no). El juego la dibuja hasta 1000 m, que en VR " +
+            "cuesta procesador. 0.5 = 500 m. 1 = como el juego. Más alto = menos FPS");
+        DetailDensity = file.Bind("World", "DetailDensity", 1f,
+            "Densidad de la vegetación del terreno (hierba, arbustos) respecto al juego (0 - 1). 0.5 = la mitad de matas. " +
+            "Más bajo = más FPS");
+        TreeBillboardDistance = file.Bind("World", "TreeBillboardDistance", 100f,
+            "Hasta qué distancia (m) se dibujan los árboles en 3D; más allá el juego usa imágenes planas, que en VR " +
+            "no se ven bien. 0 = como el juego (300). Más alto = cuesta FPS");
     }
 }

@@ -138,7 +138,7 @@ internal class VRAim : MonoBehaviour
 
         AimPoint = point;
 
-        if (how != lastHow)
+        if (how != lastHow && Plugin.Cfg.Diagnostics.Value)
         {
             lastHow = how;
             Plugin.Log.LogInfo($"Apuntado: {(how ?? "sin punto (el mando apunta al cielo)")}. Máscara {mask:X}");
@@ -163,7 +163,7 @@ internal class VRAim : MonoBehaviour
 
         // Punto del mundo → píxel de la cámara del juego (renderiza a un RT del tamaño de la pantalla)
         // Diagnóstico: distancia entre el punto del mando y el punto que el juego usa
-        if (Time.unscaledTime >= nextDiag)
+        if (Plugin.Cfg.Diagnostics.Value && Time.unscaledTime >= nextDiag)
         {
             nextDiag = Time.unscaledTime + 5f;
             var game = player.localTargetPosition;

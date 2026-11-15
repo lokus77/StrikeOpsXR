@@ -25,6 +25,8 @@
     <Reference Include="Unity.RenderPipelines.Core.Runtime"><HintPath>$(GameManaged)\Unity.RenderPipelines.Core.Runtime.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Unity.RenderPipelines.Universal.Runtime"><HintPath>$(GameManaged)\Unity.RenderPipelines.Universal.Runtime.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Fusion.Runtime"><HintPath>$(GameManaged)\Fusion.Runtime.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="sc.stylizedwater2.runtime"><HintPath>$(GameManaged)\sc.stylizedwater2.runtime.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.TerrainModule"><HintPath>$(GameManaged)/UnityEngine.TerrainModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Robosaru"><HintPath>$(GameManaged)\Robosaru.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>
 

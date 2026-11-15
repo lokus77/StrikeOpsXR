@@ -76,8 +76,10 @@ internal static class OpenXRBoot
             return false;
         }
 
-        // Multi-pass: el juego no tiene variantes de shader para single-pass instanced
-        settings.renderMode = OpenXRSettings.RenderMode.MultiPass;
+        // Multi-pass por defecto: el juego (solo pantalla) puede no tener variantes de shader para single-pass instanced
+        var singlePass = string.Equals(Plugin.Cfg.StereoRenderMode.Value, "SinglePass", StringComparison.OrdinalIgnoreCase);
+        settings.renderMode = singlePass ? OpenXRSettings.RenderMode.SinglePassInstanced : OpenXRSettings.RenderMode.MultiPass;
+        log.LogInfo($"Modo estéreo: {settings.renderMode}");
         settings.depthSubmissionMode = OpenXRSettings.DepthSubmissionMode.None;
         SetInteractionProfiles(settings);
 

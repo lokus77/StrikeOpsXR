@@ -398,7 +398,8 @@ internal class VRRig : MonoBehaviour
     // ---- distancia de la vista: grip derecho + stick derecho ----
 
     private const float MinDistance = 0.15f;
-    private const float MaxDistance = 3f;
+    private const float DefaultDistance = 0.75f; // al arrancar el juego (no se guarda en el .cfg)
+    private static float MaxDistance => Mathf.Clamp(Plugin.Cfg.CameraMaxDistance.Value, MinDistance, 3f);
     private float cameraDistance = -1f;
 
     /// <summary>
@@ -416,11 +417,11 @@ internal class VRRig : MonoBehaviour
     private void HandleZoomInput()
     {
         if (cameraDistance < 0f)
-            cameraDistance = Mathf.Clamp(Plugin.Cfg.CameraDistance.Value, MinDistance, MaxDistance);
+            cameraDistance = Mathf.Clamp(DefaultDistance, MinDistance, MaxDistance);
         if (!viewYawLoaded)
         {
             viewYawLoaded = true;
-            ViewYaw = Plugin.Cfg.CameraYaw.Value;
+            ViewYaw = 0f;
         }
 
         if (!rightHand.isValid)
@@ -431,7 +432,7 @@ internal class VRRig : MonoBehaviour
         }
 
         // Stick derecho (sin botones): arriba/abajo = acercar/alejar, izquierda/derecha = girar.
-        // Al volver al centro se guarda en el .cfg.
+        // No se guarda: cada vez que arranca el juego vuelve a 0.75 y 0°.
         rightHand.TryGetFeatureValue(CommonUsages.primary2DAxis, out var stick);
         var active = false;
 
@@ -458,9 +459,8 @@ internal class VRRig : MonoBehaviour
         else if (zooming)
         {
             zooming = false;
-            Plugin.Cfg.CameraDistance.Value = Mathf.Round(cameraDistance * 100f) / 100f;
-            Plugin.Cfg.CameraYaw.Value = Mathf.Round(ViewYaw);
-            Plugin.Log.LogInfo($"CameraDistance guardado: {Plugin.Cfg.CameraDistance.Value}, CameraYaw: {Plugin.Cfg.CameraYaw.Value}");
+            if (Plugin.Cfg.Diagnostics.Value)
+                Plugin.Log.LogInfo($"Vista: distancia {cameraDistance:F2}, giro {ViewYaw:F0}° (no se guarda: al arrancar vuelve a 0.75 y 0°)");
         }
     }
 
