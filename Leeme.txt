@@ -1,0 +1,19 @@
+
+Para jugar:
+Lanza StrikeOps.exe
+
+Si se abre en Steam, tienes virtual desktop instalado y prefieres que se abra sólo con VD, lanza "OpenXR_Forzar_VirtualDesktop.bat"
+
+Se puede jugar con la configuración del juego por defecto, pero es recomendable utilizar la mía. Para ello Doble click en "Config_recomendada_del_juego.reg", y responder YES: 
+
+Esto configurará el juego para más FPS y jugabilidad:
+- Resolucion 1600x1050
+- Refresco 120hz/FPS
+- Pantalla completa NO.
+- Vsync NO
+- Antialias NO
+- Vibracion mando SI
+- Lenguaje Castellano
+- Pausa el juego en mensajes hasta pulsar A: NO
+
+
