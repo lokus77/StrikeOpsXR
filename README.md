@@ -3,15 +3,14 @@
 ![Reflex Unit Strike Ops VR](docs/portada.webp)
 
 Mod VR (OpenXR) para **Reflex Unit Strike Ops** (Unity 2022.3.22f1, Mono, URP, solo Vulkan).
+Probado en versión 1.0.3 del juego.
 
 Estado: renderizado estéreo con tracking del casco, HUD y menús en un panel flotante, mandos VR mapeados, apuntado con el mando derecho y cámara que sigue al helicóptero (zoom y giro con el stick derecho).
 
 ## Novedades 0.2.1
-
-- Corregidos los tirones y la imagen doble del helicóptero en VR: la vista va pegada al helicóptero visible (`Rig.FollowSharpness = 1000` por defecto).
+- Corregidos los tirones y la imagen doble del helicóptero en VR.
 
 ## Novedades 0.2.0
-
 - Compatible OpenXR (por defecto). VDXR (Virtual Desktop) funciona bien y no necesita Steam.
 - Música habilitada por defecto.
 - Correcciones visuales: sin la mira 2D, la línea de puntos ni el recuadro del objetivo fijado (en VR no coincidían con el mundo), sin el fondo gris desenfocado de los menús y sin temblor de cámara al recibir impactos.
@@ -53,7 +52,7 @@ Con otra ruta del juego: `.\deploy.ps1 -GamePath "D:\...\Reflex.Unit.Strike.Ops"
 
 ## Probar
 
-1. Enciende el casco y el runtime OpenXR **antes** de lanzar el juego.
+1. Estar conectado con Virtual Desktop / Steam link / Metalink, con runtime OpenXR **antes** .
 2. Lanza `StrikeOps.exe`.
 3. Revisa los logs:
    - `BepInEx/LogOutput.log`: tiene que aparecer `OpenXR en marcha. Runtime: ...` y `Cámara del juego: ...`.
@@ -76,7 +75,7 @@ Está en `BepInEx/config/strikeopsxr.cfg`, que se genera al primer arranque:
 | `Rig.FollowCameraPitch` | false | true = hereda la inclinación de la cámara del juego |
 | `Rig.HeightOffset` / `Rig.BackOffset` | 0 | Ajuste fino de la posición del rig |
 | `Rig.RecenterKey` | F8 | |
-| `Rig.ScaleSpeed` | 1.0 | Velocidad del ajuste de escala en vivo |
+
 
 **Escala en vivo:** mantén el **grip izquierdo** y mueve el **stick izquierdo** arriba o abajo. Grip + clic del stick vuelve a 1. Al soltar el grip se guarda en `Rig.WorldScale`.
 | `PostFx.*` | true | Desactivan DOF/tilt-shift, motion blur y efectos de lente |
@@ -85,14 +84,12 @@ Está en `BepInEx/config/strikeopsxr.cfg`, que se genera al primer arranque:
 
 - **HUD en el casco** (`Plugin/UiOverlay.cs`, primera versión): cada `PanelSettings` renderiza a un RenderTexture que se muestra en un panel flotante (`UI.*` en el `.cfg`), con un cursor propio. Pendiente: alinear con el mundo los marcadores del HUD (usan `WorldToScreenPoint` de la cámara del juego).
 - **Mandos VR** (`Plugin/VRControls.cs`, primera versión):
-  - Y = E (mapa), A = Enter.
-  - Stick izquierdo = flechas en menús y movimiento analógico en juego (parche sobre `LocalPlayerInput.Update`).
-  - X = Q (aterrizar), B = Z (siguiente objetivo), grip derecho = T (cambiar objetivo en el mapa).
-  - Gatillo derecho = `PrimaryFire`, gatillo izquierdo = `SecondaryFire`, resueltos en tiempo de ejecución a su tecla o botón de ratón.
+  - Y = mapa, A = Aceptar
+  - Stick izquierdo = Moverse por los  menús y movimiento analógico en juego (parche sobre `LocalPlayerInput.Update`).
+  - X = Aterrizar, B = Siguiente objetivo. Mantener pulsado B = Info objetivo mapa., grip derecho = Siguiente objetivo en el mapa.
+  - Gatillo derecho = `PrimaryFire`, gatillo izquierdo = `SecondaryFire` 
   - Indicaciones en pantalla con el botón VR (`Plugin/VRPrompts.cs`): sustituye el `keyboardSprite` de cada acción en `DeviceSprites` por el icono de mando equivalente.
-  - Apuntado con el mando derecho (`Plugin/VRAim.cs`): un rayo desde el mando contra `PoolManager.mouseAimingLayer`; el punto se proyecta a la pantalla de la cámara del juego y se mueve el ratón ahí. Muestra un láser.
-- **Confort**: suavizar el seguimiento del rig.
-- **Verificar**: que el parche de IPD (`Plugin/IpdScale.cs`, prefijo de Harmony en `XRView`) da un efecto maqueta correcto, y que las nubes volumétricas y `sc.posteffects` se ven bien en estéreo.
+  - Apuntado con el mando derecho (`Plugin/VRAim.cs`). 
 
 ## Licencia
 
