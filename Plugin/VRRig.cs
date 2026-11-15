@@ -444,6 +444,10 @@ internal class VRRig : MonoBehaviour
         // Stick derecho (sin botones): arriba/abajo = acercar/alejar, izquierda/derecha = girar.
         // No se guarda: cada vez que arranca el juego vuelve a 0.75 y 0°.
         rightHand.TryGetFeatureValue(CommonUsages.primary2DAxis, out var stick);
+        if (VRControls.YHeld)
+            stick = Vector2.zero;   // Y + stick der. = flechas arriba/abajo (VRControls)
+        else if (VRControls.GripHeld)
+            stick = Vector2.zero;   // grip der. + stick der. = flechas izq./der. (VRControls)
         var active = false;
 
         if (Mathf.Abs(stick.x) > StickDeadzone)

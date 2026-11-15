@@ -16,6 +16,7 @@ namespace StrikeOpsXR;
 /// Mandos VR → controles del juego.
 ///  Siempre:
 ///   - Y (izq.)              = E (mapa)
+///   - Y + stick der. ↑/↓    = flecha arriba / abajo (la vista no se mueve mientras Y está pulsada)
 ///   - A (der.)              = Enter
 ///  Menús:
 ///   - Stick izq.            = flechas (el InputSystemUIInputModule hace navegación y repetición)
@@ -23,7 +24,8 @@ namespace StrikeOpsXR;
 ///   - Stick izq.            = movimiento analógico (inyectado en LocalPlayerInput.movement)
 ///   - X (izq.)              = Q (aterrizar)
 ///   - B (der.) corto        = Z (siguiente objetivo); mantener 0,8 s = T (objetivo en el mapa)
-///   - Grip der.             = flecha derecha (siempre)
+///   - Grip der. + toque stick der. ←/→ = una flecha izquierda / derecha por toque
+///                             (el grip solo no manda nada; la vista no gira ni se acerca mientras)
 ///   - Stick der.            = acercar/alejar y girar la vista (VRRig)
 ///   - Grip izq.             = Espacio (siempre)
 ///   - Clic stick der.       = Escape (siempre)
@@ -46,6 +48,15 @@ internal class VRControls : MonoBehaviour
     internal static bool MoveActive;
     internal static Vector2 Move;
     private static bool moveWasActive;
+
+    // Y pulsada: el stick der. manda flechas y VRRig no mueve la vista
+    internal static bool YHeld;
+
+    // Grip der. pulsado: el stick der. manda flechas izq./der. y VRRig no gira la vista
+    internal static bool GripHeld;
+    private int gripFlick;          // -1/1 mientras el stick sigue inclinado tras un toque
+    private Key gripKey;
+    private float gripTapUntil;
 
     private InputDevice left, right;
     private bool? lastGameplay;
@@ -105,9 +116,29 @@ internal class VRControls : MonoBehaviour
         }
 
         // Botones comunes
-        if (Pressed(left, CommonUsages.secondaryButton)) wantedKeys.Add(Key.E);
+        YHeld = Pressed(left, CommonUsages.secondaryButton);
+        if (YHeld)
+        {
+            wantedKeys.Add(Key.E);
+            var rs = Axis(right);
+            SetNav(Key.UpArrow, rs.y);
+            SetNav(Key.DownArrow, -rs.y);
+        }
         if (Pressed(right, CommonUsages.primaryButton)) wantedKeys.Add(Key.Enter);
-        if (Pressed(right, CommonUsages.gripButton)) wantedKeys.Add(Key.RightArrow);          // grip der.
+        // Grip der. mantenido: cada toque del stick der. a izq./der. = una pulsación de flecha
+        // izquierda/derecha. El grip solo no manda nada, ni volver el stick al centro.
+        GripHeld = Pressed(right, CommonUsages.gripButton);
+        var gx = GripHeld ? Axis(right).x : 0f;
+        if (gripFlick == 0 && Mathf.Abs(gx) > NavPress)
+        {
+            gripFlick = gx > 0f ? 1 : -1;
+            gripKey = gripFlick > 0 ? Key.RightArrow : Key.LeftArrow;
+            gripTapUntil = Time.unscaledTime + TapHold;
+        }
+        else if (gripFlick != 0 && Mathf.Abs(gx) < NavRelease)
+            gripFlick = 0;
+        if (Time.unscaledTime < gripTapUntil)
+            wantedKeys.Add(gripKey);
 
         // B: pulsación corta = Z (siguiente objetivo, en partida), al soltar.
         //    Mantener 0,8 s = T (cambiar objetivo en el mapa, siempre), y entonces no se manda Z.

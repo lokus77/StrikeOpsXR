@@ -7,6 +7,13 @@ Probado en versión 1.0.3 del juego.
 
 Estado: renderizado estéreo con tracking del casco, HUD y menús en un panel flotante, mandos VR mapeados, apuntado con el mando derecho y cámara que sigue al helicóptero (zoom y giro con el stick derecho).
 
+## Novedades 0.2.2
+
+- Y + stick derecho arriba/abajo = flecha arriba/abajo (Y sigue abriendo el mapa). Mientras se mantiene Y, la vista no se mueve.
+- Grip derecho mantenido + toque del stick derecho a izquierda/derecha = una flecha izquierda/derecha por toque. El grip solo ya no manda flecha derecha; sin grip, el stick derecho sigue girando y acercando la vista.
+- `OpenXR_Forzar_VirtualDesktop.bat` y `OpenXR_RestaurarDefault.bat` para forzar el OpenXR de Virtual Desktop (VDXR) o volver al del sistema.
+- Si a `boot.config` le falta la preinicialización OpenXR (primer arranque o tras `Jugar sin VR.bat` interrumpido), el mod la pone y reabre el juego solo, en vez de colgarse con VDXR.
+
 ## Novedades 0.2.1
 - Corregidos los tirones y la imagen doble del helicóptero en VR.
 
@@ -19,7 +26,9 @@ Estado: renderizado estéreo con tracking del casco, HUD y menús en un panel fl
 - Mayor distancia de dibujado de la vegetación; el mar llega hasta el horizonte.
 - La ventana del juego coge el foco al arrancar. La vista empieza siempre en distancia 0.75 y giro 0°.
 
-**Primer arranque:** el mod activa la preinicialización de OpenXR en `StrikeOps_Data/boot.config`. Unity lee ese fichero antes de que se cargue el mod, así que la primera vez hay que cerrar el juego y volver a abrirlo. Para jugar en plano: `Jugar sin VR.bat`.
+**Primer arranque:** el mod activa la preinicialización de OpenXR en `StrikeOps_Data/boot.config`. Unity lee ese fichero antes de que se cargue el mod, así que la primera vez el juego se cierra y se vuelve a abrir solo. Para jugar en plano: `Jugar sin VR.bat`.
+
+**Runtime OpenXR:** `OpenXR_Forzar_VirtualDesktop.bat` hace que el juego use siempre el OpenXR de Virtual Desktop (VDXR), aunque otro runtime (SteamVR, Meta, Pico...) sea el activo del sistema. `OpenXR_RestaurarDefault.bat` vuelve al runtime por defecto del sistema. Ambos cambian `General.OpenXRRuntimeJson` en `BepInEx\config\strikeopsxr.cfg`, que se crea al arrancar el juego una vez con el mod.
 
 ## Mandos
 
@@ -84,9 +93,9 @@ Está en `BepInEx/config/strikeopsxr.cfg`, que se genera al primer arranque:
 
 - **HUD en el casco** (`Plugin/UiOverlay.cs`, primera versión): cada `PanelSettings` renderiza a un RenderTexture que se muestra en un panel flotante (`UI.*` en el `.cfg`), con un cursor propio. Pendiente: alinear con el mundo los marcadores del HUD (usan `WorldToScreenPoint` de la cámara del juego).
 - **Mandos VR** (`Plugin/VRControls.cs`, primera versión):
-  - Y = mapa, A = Aceptar
+  - Y = mapa, A = Aceptar. Mantener Y + stick derecho arriba/abajo = flecha arriba/abajo.
   - Stick izquierdo = Moverse por los  menús y movimiento analógico en juego (parche sobre `LocalPlayerInput.Update`).
-  - X = Aterrizar, B = Siguiente objetivo. Mantener pulsado B = Info objetivo mapa., grip derecho = Siguiente objetivo en el mapa.
+  - X = Aterrizar, B = Siguiente objetivo. Mantener pulsado B = Info objetivo mapa.. Mantener grip derecho + toque del stick derecho izquierda/derecha = flecha izquierda/derecha (cambiar objetivo en el mapa).
   - Gatillo derecho = `PrimaryFire`, gatillo izquierdo = `SecondaryFire` 
   - Indicaciones en pantalla con el botón VR (`Plugin/VRPrompts.cs`): sustituye el `keyboardSprite` de cada acción en `DeviceSprites` por el icono de mando equivalente.
   - Apuntado con el mando derecho (`Plugin/VRAim.cs`). 

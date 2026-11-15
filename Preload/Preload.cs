@@ -1,4 +1,4 @@
-// Basado en RepoXR.Preload (https://github.com/DaXcess/RepoXR), GPL-3.0.
+﻿// Basado en RepoXR.Preload (https://github.com/DaXcess/RepoXR), GPL-3.0.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -79,7 +79,7 @@ public static class Preload
 
             // Preinicialización: Unity carga UnityOpenXR antes de crear el dispositivo Vulkan y lo crea
             // a través de OpenXR (con las extensiones que pide el runtime). Imprescindible para VDXR.
-            SetPreInit(dataDir, true);
+            var preInitAdded = SetPreInit(dataDir, true);
 
             // El juego guarda sus plugins nativos en Plugins/x86_64
             var pluginsDir = Path.Combine(dataDir, "Plugins", "x86_64");
@@ -105,6 +105,11 @@ public static class Preload
             }
 
             Logger.LogInfo("Assets de runtime OpenXR listos");
+
+            // Sin la preinicialización (ya leída de boot.config), arrancar OpenXR con VDXR cuelga el juego.
+            // Se vuelve a abrir el juego, que ya leerá boot.config con ella.
+            if (preInitAdded)
+                Relaunch();
         }
         catch (Exception ex)
         {
@@ -119,13 +124,13 @@ public static class Preload
     /// Pone o quita xrsdk-pre-init-library en boot.config. Unity lee boot.config al arrancar el proceso,
     /// así que si hay que cambiarlo, el cambio vale para el siguiente arranque.
     /// </summary>
-    private static void SetPreInit(string dataDir, bool enable)
+    private static bool SetPreInit(string dataDir, bool enable)
     {
         try
         {
             var path = Path.Combine(dataDir, "boot.config");
             if (!File.Exists(path))
-                return;
+                return false;
 
             var lines = File.ReadAllLines(path).ToList();
             var has = lines.Any(l => l.Trim() == PreInitLine);
@@ -133,7 +138,7 @@ public static class Preload
             {
                 if (enable)
                     Logger.LogInfo("boot.config: preinicialización OpenXR activa");
-                return;
+                return false;
             }
 
             var backup = path + ".strikeopsxr.bak";
@@ -149,10 +154,45 @@ public static class Preload
                 ? "boot.config: añadida la preinicialización OpenXR. Tendrá efecto en el PRÓXIMO arranque " +
                   "(hace falta para Virtual Desktop / VDXR)"
                 : "boot.config: quitada la preinicialización OpenXR");
+            return enable;
         }
         catch (Exception ex)
         {
             Logger.LogError($"No se pudo actualizar boot.config: {ex.Message}");
+            return false;
+        }
+    }
+
+    private const string RelaunchVar = "STRIKEOPSXR_RELAUNCHED";
+
+    /// <summary>Abre otra vez el juego con los mismos argumentos y cierra este proceso.</summary>
+    private static void Relaunch()
+    {
+        if (Environment.GetEnvironmentVariable(RelaunchVar) == "1")
+        {
+            Logger.LogError("boot.config sigue sin la preinicialización tras reabrir; no se vuelve a reabrir");
+            return;
+        }
+
+        try
+        {
+            var exe = System.Diagnostics.Process.GetCurrentProcess().MainModule!.FileName;
+            var args = string.Join(" ", Environment.GetCommandLineArgs().Skip(1)
+                .Select(a => a.Contains(" ") ? "\"" + a + "\"" : a));
+            var psi = new System.Diagnostics.ProcessStartInfo(exe, args)
+            {
+                UseShellExecute = false,
+                WorkingDirectory = Paths.GameRootPath,
+            };
+            psi.EnvironmentVariables[RelaunchVar] = "1";
+
+            Logger.LogWarning("Reabriendo el juego para que use la preinicialización OpenXR...");
+            System.Diagnostics.Process.Start(psi);
+            Environment.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"No se pudo reabrir el juego: {ex.Message}. Ciérralo y vuelve a abrirlo.");
         }
     }
 

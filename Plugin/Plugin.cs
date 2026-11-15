@@ -17,7 +17,7 @@ public class Plugin : BaseUnityPlugin
 {
     public const string GUID = "strikeopsxr";
     public const string NAME = "StrikeOpsXR";
-    public const string VERSION = "0.2.1";
+    public const string VERSION = "0.2.2";
 
     internal static Plugin Instance { get; private set; }
     internal static ModConfig Cfg { get; private set; }
