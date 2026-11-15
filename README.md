@@ -23,6 +23,10 @@ Status: stereo rendering with head tracking, HUD and menus on a floating panel, 
 
 **OpenXR runtime:** if you don't want the game to open Steam, run `OpenXR_Forzar_VirtualDesktop.bat` once. The game will then always use the Virtual Desktop OpenXR runtime (VDXR), even if another runtime (SteamVR, Meta, Pico...) is the system's active one. It changes nothing in Windows, only `General.OpenXRRuntimeJson` in `BepInEx\config\strikeopsxr.cfg` (created the first time the game runs with the mod). `OpenXR_RestaurarDefault.bat` goes back to the system's default runtime.
 
+## Video
+
+[![StrikeOpsXR gameplay video](https://img.youtube.com/vi/7f8rI8VrKH0/hqdefault.jpg)](https://www.youtube.com/shorts/7f8rI8VrKH0)
+
 ## Controls
 
 ![VR controller map](docs/controllers.webp)

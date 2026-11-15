@@ -23,6 +23,10 @@ Estado: renderizado estéreo con tracking del casco, HUD y menús en un panel fl
 
 **Runtime OpenXR:** si no quieres que el juego abra Steam, lanza una vez `OpenXR_Forzar_VirtualDesktop.bat`. Así el juego usará siempre el OpenXR de Virtual Desktop (VDXR), aunque otro runtime (SteamVR, Meta, Pico...) sea el activo del sistema. No cambia nada en Windows, solo `General.OpenXRRuntimeJson` en `BepInEx\config\strikeopsxr.cfg` (que se crea al arrancar el juego una vez con el mod). `OpenXR_RestaurarDefault.bat` vuelve al runtime por defecto del sistema.
 
+## Vídeo
+
+[![Vídeo de StrikeOpsXR](https://img.youtube.com/vi/7f8rI8VrKH0/hqdefault.jpg)](https://www.youtube.com/shorts/7f8rI8VrKH0)
+
 ## Mandos
 
 ![Mapeo de los mandos VR](docs/mandos.webp)
